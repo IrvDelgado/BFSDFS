@@ -357,6 +357,9 @@ function drawLeftBuffer(){
   //Trazando nodos.
   for (let b of Nodos) {
     b.show();
+    
+    // flechaux= new Flecha( b );
+    // flechaux.show();
     //b.move();
   }
 }
@@ -435,7 +438,9 @@ class Nodo {
   show() {
     leftBuffer.stroke(255);
     leftBuffer.strokeWeight(3);
+    
     leftBuffer.fill(this.brightness, 125, 200);
+    // leftBuffer.noFill();
     
     leftBuffer.ellipse(this.x, this.y, this.r * 2);
 
@@ -472,7 +477,48 @@ class Nodo {
 
 }
 
+class Flecha {
+  //Crear una flecha que apunta a un nodo.
+  constructor( nodo  ) {
+    // verticeIzq, verticeSuperior, verticeInferior, verticeDer
 
+    //Verificando si el nodo está muy a la izquierda, en ese caso orientar a la derecha.
+
+    if(nodo.x <= nodo.r*2){
+      //La distancia por la izquierda es pequeña, orientar a la derecha.
+    }else{
+      this.verticeDerX=nodo.x - (nodo.r + nodo.r*.2 ) ;
+      this.verticeDerY=nodo.y;
+
+      this.verticeIzqX=nodo.x - (nodo.r *3 ) ;
+      this.verticeIzqY=nodo.y;
+
+      
+      this.verticeSuperiorX=this.verticeDerX- (nodo.r*.4);
+      this.verticeSuperiorY=nodo.y - (nodo.r*.3) ;
+
+      this.verticeInferiorX=this.verticeSuperiorX;
+      this.verticeInferiorY= nodo.y + (nodo.r*.3);
+    }
+
+    
+  }
+
+  show(){
+    leftBuffer.stroke(255,0,0);
+    leftBuffer.strokeWeight(3);
+    leftBuffer.fill(255,0,0);
+    //Linea de vertizq al centro de la linea entre vertSup y vertInf
+     leftBuffer.line( this.verticeIzqX, this.verticeIzqY, this.verticeInferiorX, this.verticeIzqY  );
+    // leftBuffer.line(this.verticeIzqX, this.verticeIzqY, this.verticeDerX,this.verticeDerY);
+
+    //Triangulo de los puntos verticeSuperior, verticeInferior, verticeDer
+
+    leftBuffer.triangle(this.verticeDerX,this.verticeDerY, this.verticeSuperiorX, this.verticeSuperiorY, this.verticeInferiorX, this.verticeInferiorY);
+    // leftBuffer.triangle(this.verticeIzqX,this.verticeIzqY, this.verticeSuperiorX, this.verticeSuperiorY, this.verticeInferiorX, this.verticeInferiorY);
+
+  }
+}
 //TODO verificar Si hay forma de llegar a él. DEBE ser conexo.
 //Remover nodos y aristas.
 //Que tenga buen diseño.
