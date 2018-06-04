@@ -78,8 +78,8 @@ function setup() {
 
 
   radioBtn = createRadio();
-  radioBtn.option('BFS');
-  radioBtn.option('DFS');
+  radioBtn.option('Breadth First Search');
+  radioBtn.option('Depth First Search ');
   radioBtn.hide();  
 
   comenzarBtn=createButton("Comenzar.")
@@ -376,19 +376,21 @@ function drawRightBuffer(){
 
     //VERIFICAR que se haya elegido un algoritmo si no alertar y no avanzar hasta que no se haya elegido uno.
     // console.log(algoritmo)
+    rightBuffer.noStroke();
+    rightBuffer.fill(0);
     rightBuffer.text(algoritmo, anchoderecho / 2, 20);
 
 
     rightBuffer.stroke(255);
     rightBuffer.strokeWeight(3);
 
-    rightBuffer.fill(39, 125, 200);
+    // rightBuffer.fill(39, 125, 200);
+    rightBuffer.noFill();
     
-    rightBuffer.ellipse(20, 20, 9 * 2);
-
+    // rightBuffer.ellipse(20, 20, 9 * 2);
+    rightBuffer.rect( anchoderecho-(anchoderecho/2), 40, anchoderecho-(20+ (anchoderecho/2)), altoderecho-50 )
     //rightBuffer.noFill();
 
-    //rightBuffer.rect(  anchoizquierdo+5, 5,anchoderecho-5,altoizquierdo-5   );
     
   }else{
     rightBuffer.background(255);
