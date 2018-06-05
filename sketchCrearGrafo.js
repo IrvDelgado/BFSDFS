@@ -6,6 +6,9 @@ var altoizquierdo = 400;
 
 var currentNode=-1;
 
+var Pila=[]; //Ya implementado
+var Cola=[]; //Casi implementado.
+
 var anchoderecho= 300;
 var altoderecho = 400;
 
@@ -15,6 +18,9 @@ let Aristas =[];
 let RADIO=18; 
 
 var canvas;
+
+var addToQueue=false;
+var addToStack=false;
 
 var nodoBtn;
 var nodoFlag=false;
@@ -292,7 +298,41 @@ function lastBtnPressed(){
 }
 
 function nextBtnPressed(){
+  console.log("Pressed.");
+
   
+
+  if( radioBtn.value()=='Breadth First Search')
+  {
+    if(currentNode!=-1 ){
+      if(!Nodos[currentNode].visitado ){
+        Nodos[currentNode].visitado=true;
+        // addToQueue=true;
+      }
+    }
+
+  }else if(radioBtn.value()=='Depth First Search ')
+  {
+    if(currentNode!=-1 ){
+      if(!Nodos[currentNode].visitado ){
+        Nodos[currentNode].visitado=true;
+        addToStack=true;
+      }else if(addToStack ){
+        //Añadiendo a la pila.
+        nodoAux= new Nodo(Nodos[currentNode].x, Nodos[currentNode].y, Nodos[currentNode].r,Nodos[currentNode].numero );
+        //Calcular su valor en y.
+        nodoAux.x= ((anchoderecho-(20+ (anchoderecho/2)) )/2 )+ anchoderecho-(anchoderecho/2) ;
+        nodoAux.y= altoderecho-24;
+        
+        Cola.push(nodoAux);
+        //Dibujando.
+      }
+    }
+  
+
+  }
+
+
 }
 
 function regresarElegirBtnPressed(){
@@ -368,13 +408,8 @@ function drawLeftBuffer(){
     
     if( comenzarBtnFlag ){
 
-
-
       if(con==currentNode)
       {
-        if(!b.visitado)
-          b.visitado=true;
-          
         flechaux= new Flecha( b );
         flechaux.showIzq();
       }else if(currentNode==-1 && Nodo.length >0 ){
@@ -382,19 +417,6 @@ function drawLeftBuffer(){
       }
     
       con++;
-
-      if( radioBtn.value()=='Breadth First Search')
-      {
-
-
-      }else if(radioBtn.value()=='Depth First Search ')
-      {
-
-
-      }
-
-
-
 
     }
   }
@@ -416,17 +438,26 @@ function drawRightBuffer(){
     rightBuffer.fill(0);
     rightBuffer.text(algoritmo, anchoderecho / 2, 20);
 
-
+    //Dibujando contorno de pila/cola
     rightBuffer.stroke(255);
     rightBuffer.strokeWeight(3);
-
     // rightBuffer.fill(39, 125, 200);
     rightBuffer.noFill();
-    
     // rightBuffer.ellipse(20, 20, 9 * 2);
     rightBuffer.rect( anchoderecho-(anchoderecho/2), 40, anchoderecho-(20+ (anchoderecho/2)), altoderecho-50 )
     //rightBuffer.noFill();
 
+
+    //Dibujando los elementos de la pila o cola.
+    if(radioBtn.value()== 'Depth First Search '  ){
+      //Dibujando elementos de la pila.
+      for( el of Cola ){
+        el.showOnRight();
+      }
+
+    }else if(   radioBtn.value() == 'Breadth First Search' ){
+      //Dibujando elementos de la cola.
+    }
     
   }else{
     rightBuffer.background(255);
