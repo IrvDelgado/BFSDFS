@@ -2,25 +2,31 @@ var leftBuffer;
 var rightBuffer;
 
 var anchoizquierdo= 800;
-var altoizquierdo = 400;
+var altoizquierdo = 500;
+
+var  anchoCanvas= 1200;
+var  altoCanvas=500;
 
 var currentNode=-1;
 
 var Pila=[]; //Ya implementado
 var Cola=[]; //Casi implementado.
+var paths=[];
 
 var anchoderecho= 300;
-var altoderecho = 400;
+var altoderecho = 500;
 
 let Nodos = [];
 let Aristas =[];
 
 let RADIO=18; 
-
+var currentPath=-1;
 var canvas;
 
 var addToQueue=false;
 var addToStack=false;
+
+var buscarCaminos=false;
 
 var nodoBtn;
 var nodoFlag=false;
@@ -52,7 +58,7 @@ var clickunoAr=true;
 
 function setup() {
 
-  canvas=createCanvas(1200, 400);
+  canvas=createCanvas(anchoCanvas, altoCanvas);
 
   canvas.mousePressed(canvaspressed);
 
@@ -322,10 +328,64 @@ function nextBtnPressed(){
         nodoAux= new Nodo(Nodos[currentNode].x, Nodos[currentNode].y, Nodos[currentNode].r,Nodos[currentNode].numero );
         //Calcular su valor en y.
         nodoAux.x= ((anchoderecho-(20+ (anchoderecho/2)) )/2 )+ anchoderecho-(anchoderecho/2) ;
-        nodoAux.y= altoderecho-24;
+        nodoAux.y= altoderecho- ((currentNode+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la pila.
+        //CHECAR ^__ BUScar que numero de elemento es currentNode en la pila ese numero es el que se debe multiplicar por la altura.
         
         Cola.push(nodoAux);
+        console.log("Added node to stack!")
         //Dibujando.
+        buscarCaminos=true;
+        currentPath=-1;
+        paths=[]
+        addToStack=false;
+      }else if( buscarCaminos){
+        //Buscar si hay caminos desde el nodo actual.
+        console.log("Got here. Looking paths.");
+        if(currentPath==-1){
+          //Buscar caminos.
+          //Buscando todas las aristas que tengan al nodo.
+          for(edge of Aristas){
+            if(edge.Nodo1.x ==  Nodos[currentNode].x && edge.Nodo1.y ==  Nodos[currentNode].y )
+            {
+              //tomar Nodo2 como un camino desde Nodos[currentNode]
+              //console.log("Pushing node ", edge.Nodo1.numero);
+              paths.push( edge.Nodo2 );
+            }else if(edge.Nodo2.x ==  Nodos[currentNode].x && edge.Nodo2.y ==  Nodos[currentNode].y  ){
+              //tomar Nodo1 como un camino desde Nodos[currentNode]
+              paths.push( edge.Nodo1);
+              // console.log("Pushing node ", edge.Nodo2.numero);
+            }
+
+          }
+          
+          if(paths.length >0 ){
+            currentPath=0;
+          }
+
+        }
+
+        console.log("Hay ", paths.length, " caminos");
+        //De los posibles caminos, ir al camino no visitado con numeor menor.
+        var m=0
+        for( p of paths){
+          console.log("checando el camino", m+1, " este camino es hacia el nodo ", p.numero);
+
+          if(! Nodos[p.numero ].visitado){
+            currentNode=p.numero;
+            console.log("Cambiando al nodo ", p.numero);
+            buscarCaminos=false;
+            break;
+          }
+          m++;
+        }
+
+        /*
+        if(currentPath == paths.length){
+          buscarCaminos=false;
+          //TODO encender siguiente bandera.
+        }*/
+        
+
       }
     }
   
