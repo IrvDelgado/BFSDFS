@@ -386,23 +386,39 @@ function nextBtnPressed(){
         console.log("Hay ", paths.length, " caminos");
         //De los posibles caminos, ir al camino no visitado con numeor menor.
         var m=0
+        var posiblescaminos=false;
         for( p of paths){
           console.log("checando el camino", m+1, " este camino es hacia el nodo ", p.numero);
 
           if(! Nodos[p.numero ].visitado){
             currentNode=p.numero;
-            console.log("Cambiando al nodo ", p.numero);
+            console.log("No se ha visitado, Cambiando al nodo ", p.numero);
             buscarCaminos=false;
+            posiblescaminos=true;
             break;
           }
+
+          
           m++;
         }
 
-        /*
-        if(currentPath == paths.length){
-          buscarCaminos=false;
-          //TODO encender siguiente bandera.
-        }*/
+        if(!posiblescaminos){
+          //si ya no hay a donde ir.
+          console.log("Ya se visitó, no ir. No hay donde ir, ir al ultimo elemento de la pila.")
+          //Moviendo al valor donde apunta la pila.
+          
+          //
+          
+          Pila.pop().numero;
+          currentNode= Pila[Pila.length-1].numero;
+          
+          
+          
+
+          currentPath=-1;
+          //console.log("Popping node ",  );
+        }
+
         
 
       }
