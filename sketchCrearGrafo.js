@@ -268,15 +268,22 @@ function editarBtnPressed(){
 
 function comenzarBtnPressed(){
 
-  comenzarBtnFlag=true;
-  editarBtn.hide();
-  comenzarBtn.hide();
-  radioBtn.hide();
+  if(radioBtn.value()== 'Depth First Search ' || radioBtn.value() == 'Breadth First Search' ){
+    comenzarBtnFlag=true;
+    editarBtn.hide();
+    comenzarBtn.hide();
+    radioBtn.hide();
+  
+    lastBtn.show();
+    nextBtn.show();
+  
+    regresarElegirBtn.show();
+  }else{
+    comenzarBtnFlag=false;
+    alert("Debe elegir un algoritmo!");
+  }
 
-  lastBtn.show();
-  nextBtn.show();
-
-  regresarElegirBtn.show();
+  
 
 }
 
@@ -357,17 +364,30 @@ function drawLeftBuffer(){
   //Trazando nodos.
   let con=0;
   for (let b of Nodos) {
-    b.show();
+    b.showOnLeft();
     
     if( comenzarBtnFlag ){
-      if(con==currentNode){
-      flechaux= new Flecha( b );
-      flechaux.showIzq();
-      }else if(currentNode==-1 && Nodo.length >0 ){
-        currentNode=0;
+
+      if( radioBtn.value()=='Breadth First Search')
+      {
+
+
+      }else if(radioBtn.value()=='Depth First Search ')
+      {
+
+        if(con==currentNode){
+          flechaux= new Flecha( b );
+          flechaux.showIzq();
+          }else if(currentNode==-1 && Nodo.length >0 ){
+            currentNode=0;
+          }
+        
+          con++;
       }
-    
-      con++;
+
+
+
+
     }
   }
 }
@@ -445,7 +465,7 @@ class Nodo {
     this.y = this.y + random(-2, 2);
   }
 
-  show() {
+  showOnLeft() {
     leftBuffer.stroke(255);
     leftBuffer.strokeWeight(3);
     
@@ -456,9 +476,24 @@ class Nodo {
 
     leftBuffer.noStroke();
     leftBuffer.fill(0);
-    leftBuffer.text(this.numero, this.x-2, this.y+1); 
-    
+    leftBuffer.text(this.numero, this.x-2, this.y+1);  
   }
+
+  showOnRight() {
+    rightBuffer.stroke(255);
+    rightBuffer.strokeWeight(3);
+    
+    rightBuffer.fill(this.brightness, 125, 200);
+    // leftBuffer.noFill();
+    
+    rightBuffer.ellipse(this.x, this.y, this.r * 2);
+
+    rightBuffer.noStroke();
+    rightBuffer.fill(0);
+    rightBuffer.text(this.numero, this.x-2, this.y+1);  
+  }
+
+
 }
 
 
