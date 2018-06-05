@@ -368,6 +368,21 @@ function drawLeftBuffer(){
     
     if( comenzarBtnFlag ){
 
+
+
+      if(con==currentNode)
+      {
+        if(!b.visitado)
+          b.visitado=true;
+          
+        flechaux= new Flecha( b );
+        flechaux.showIzq();
+      }else if(currentNode==-1 && Nodo.length >0 ){
+        currentNode=0;
+      }
+    
+      con++;
+
       if( radioBtn.value()=='Breadth First Search')
       {
 
@@ -375,14 +390,7 @@ function drawLeftBuffer(){
       }else if(radioBtn.value()=='Depth First Search ')
       {
 
-        if(con==currentNode){
-          flechaux= new Flecha( b );
-          flechaux.showIzq();
-          }else if(currentNode==-1 && Nodo.length >0 ){
-            currentNode=0;
-          }
-        
-          con++;
+
       }
 
 
@@ -469,7 +477,10 @@ class Nodo {
     leftBuffer.stroke(255);
     leftBuffer.strokeWeight(3);
     
-    leftBuffer.fill(this.brightness, 125, 200);
+    if(!this.visitado)
+      leftBuffer.fill(this.brightness, 125, 200);
+    else
+      leftBuffer.fill(0,200,20);
     // leftBuffer.noFill();
     
     leftBuffer.ellipse(this.x, this.y, this.r * 2);
