@@ -4,7 +4,7 @@ var rightBuffer;
 var anchoizquierdo= 800;
 var altoizquierdo = 400;
 
-
+var currentNode=-1;
 
 var anchoderecho= 300;
 var altoderecho = 400;
@@ -355,12 +355,20 @@ function drawLeftBuffer(){
   }
 
   //Trazando nodos.
+  let con=0;
   for (let b of Nodos) {
     b.show();
     
-    // flechaux= new Flecha( b );
-    // flechaux.show();
-    //b.move();
+    if( comenzarBtnFlag ){
+      if(con==currentNode){
+      flechaux= new Flecha( b );
+      flechaux.showIzq();
+      }else if(currentNode==-1 && Nodo.length >0 ){
+        currentNode=0;
+      }
+    
+      con++;
+    }
   }
 }
 
@@ -506,7 +514,7 @@ class Flecha {
     
   }
 
-  show(){
+  showIzq(){
     leftBuffer.stroke(255,0,0);
     leftBuffer.strokeWeight(3);
     leftBuffer.fill(255,0,0);
@@ -520,6 +528,25 @@ class Flecha {
     // leftBuffer.triangle(this.verticeIzqX,this.verticeIzqY, this.verticeSuperiorX, this.verticeSuperiorY, this.verticeInferiorX, this.verticeInferiorY);
 
   }
+
+
+  
+  showDer(){
+    rightBuffer.stroke(255,0,0);
+    rightBuffer.strokeWeight(3);
+    rightBuffer.fill(255,0,0);
+    //Linea de vertizq al centro de la linea entre vertSup y vertInf
+    rightBuffer.line( this.verticeIzqX, this.verticeIzqY, this.verticeInferiorX, this.verticeIzqY  );
+    // leftBuffer.line(this.verticeIzqX, this.verticeIzqY, this.verticeDerX,this.verticeDerY);
+
+    //Triangulo de los puntos verticeSuperior, verticeInferior, verticeDer
+
+    rightBuffer.triangle(this.verticeDerX,this.verticeDerY, this.verticeSuperiorX, this.verticeSuperiorY, this.verticeInferiorX, this.verticeInferiorY);
+    // leftBuffer.triangle(this.verticeIzqX,this.verticeIzqY, this.verticeSuperiorX, this.verticeSuperiorY, this.verticeInferiorX, this.verticeInferiorY);
+
+  }
+
+
 }
 //TODO verificar Si hay forma de llegar a él. DEBE ser conexo.
 //Remover nodos y aristas.
