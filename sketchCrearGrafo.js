@@ -2,10 +2,10 @@ var leftBuffer;
 var rightBuffer;
 
 var anchoizquierdo= 800;
-var altoizquierdo = 500;
+var altoizquierdo = 400;
 
 var  anchoCanvas= 1200;
-var  altoCanvas=500;
+var  altoCanvas=400;
 
 var currentNode=-1;
 
@@ -14,7 +14,7 @@ var Cola=[]; //Casi implementado.
 var paths=[];
 
 var anchoderecho= 300;
-var altoderecho = 500;
+var altoderecho = 400;
 
 let Nodos = [];
 let Aristas =[];
@@ -52,7 +52,7 @@ var nextBtn;
 var lastBtn;
 var regresarElegirBtn;
 
-
+var lblinfo;
 var clickunoAr=true;
 
 
@@ -111,6 +111,7 @@ function setup() {
   regresarElegirBtn.mousePressed(regresarElegirBtnPressed);
   regresarElegirBtn.hide();
   
+  lblinfo=createP("");
 
   //Creando nodos.
   /* for (let i = 0; i < 20; i++) {
@@ -193,10 +194,10 @@ function canvaspressed( ){
           Nodo2=Nodos[cual];
   
   
-          console.log("Se va a crear el arista del nodo ", cual1);
-          console.log(Nodo1.x, " ,", Nodo1.y );
-          console.log("Al nodo: ", cual);
-          console.log(Nodo2.x, " ,", Nodo2.y ); 
+          // console.log("Se va a crear el arista del nodo ", cual1);
+          // console.log(Nodo1.x, " ,", Nodo1.y );
+          // console.log("Al nodo: ", cual);
+          // console.log(Nodo2.x, " ,", Nodo2.y ); 
   
   
           aristaAux=new Arista( Nodo1, Nodo2 );
@@ -286,7 +287,7 @@ function comenzarBtnPressed(){
     comenzarBtn.hide();
     radioBtn.hide();
   
-    lastBtn.show();
+    // lastBtn.show();
     nextBtn.show();
   
     regresarElegirBtn.show();
@@ -304,7 +305,7 @@ function lastBtnPressed(){
 }
 
 function nextBtnPressed(){
-  console.log("Pressed.");
+  // console.log("Pressed.");
 
   
 
@@ -323,6 +324,7 @@ function nextBtnPressed(){
       if(!Nodos[currentNode].visitado ){
         Nodos[currentNode].visitado=true;
         addToStack=true;
+        lblinfo.html("Marcando nodo "+currentNode.toString() +" como visitado.")
       }else if(addToStack ){
         //Añadiendo a la pila.
         nodoAux= new Nodo(Nodos[currentNode].x, Nodos[currentNode].y, Nodos[currentNode].r,Nodos[currentNode].numero );
@@ -339,19 +341,20 @@ function nextBtnPressed(){
 
         var factor=-1;
         for(var contad=0; contad< Pila.length ; contad++){
-          console.log("Checando pila nodo: ", Pila[contad].numero);
+          // console.log("Checando pila nodo: ", Pila[contad].numero);
            if( Nodos[currentNode].numero == Pila[contad].numero ){
              factor=contad;
-             console.log("Found! @ ", contad);
+            //  console.log("Found! @ ", contad);
              break;
            }
         }
 
-        console.log("pila length: ", Pila.length);
+        
         Pila[Pila.length-1].y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la pila.
-        console.log("Factor: ", factor);
+        
 
         console.log("Added node to stack!")
+        lblinfo.html("Se añade el nodo a la pila")
         //Dibujando.
         buscarCaminos=true;
         currentPath=-1;
@@ -359,7 +362,7 @@ function nextBtnPressed(){
         addToStack=false;
       }else if( buscarCaminos){
         //Buscar si hay caminos desde el nodo actual.
-        console.log("Got here. Looking paths.");
+        // console.log("Got here. Looking paths.");
         if(currentPath==-1){
           //Buscar caminos.
           //Buscando todas las aristas que tengan al nodo.
@@ -384,15 +387,17 @@ function nextBtnPressed(){
         }
 
         console.log("Hay ", paths.length, " caminos");
+        // lblinfo.html("Hay "+ paths.length.toString()+ " caminos");
         //De los posibles caminos, ir al camino no visitado con numeor menor.
         var m=0
         var posiblescaminos=false;
         for( p of paths){
           console.log("checando el camino", m+1, " este camino es hacia el nodo ", p.numero);
-
+          //lblinfo.html("Checando el camino hacia el nodo "+ p.numero.toString() );
           if(! Nodos[p.numero ].visitado){
             currentNode=p.numero;
             console.log("No se ha visitado, Cambiando al nodo ", p.numero);
+            lblinfo.html("No se ha visitado el nodo"+ p.numero.toString()+ ", cambiando al nodo "+ p.numero.toString());
             buscarCaminos=false;
             posiblescaminos=true;
             break;
@@ -405,11 +410,13 @@ function nextBtnPressed(){
         if(!posiblescaminos){
           //si ya no hay a donde ir.
           console.log("Ya se visitó, no ir. No hay donde ir, ir al ultimo elemento de la pila.")
+          
           //Moviendo al valor donde apunta la pila.
           
           //
           
           Pila.pop().numero;
+          lblinfo.html("Ya No hay nodos que no se hayan visitado desde el nodo "+currentNode + " <br> Cambiando ultimo nodo en la pila, el nodo: "+ Pila[Pila.length-1].numero);
           currentNode= Pila[Pila.length-1].numero;
           
           
