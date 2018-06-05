@@ -328,10 +328,29 @@ function nextBtnPressed(){
         nodoAux= new Nodo(Nodos[currentNode].x, Nodos[currentNode].y, Nodos[currentNode].r,Nodos[currentNode].numero );
         //Calcular su valor en y.
         nodoAux.x= ((anchoderecho-(20+ (anchoderecho/2)) )/2 )+ anchoderecho-(anchoderecho/2) ;
-        nodoAux.y= altoderecho- ((currentNode+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la pila.
+        
+        
+        // nodoAux.y= altoderecho- ((currentNode+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la pila.
+        // nodoAux.y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la pila.
         //CHECAR ^__ BUScar que numero de elemento es currentNode en la pila ese numero es el que se debe multiplicar por la altura.
         
-        Cola.push(nodoAux);
+        Pila.push(nodoAux);
+
+
+        var factor=-1;
+        for(var contad=0; contad< Pila.length ; contad++){
+          console.log("Checando pila nodo: ", Pila[contad].numero);
+           if( Nodos[currentNode].numero == Pila[contad].numero ){
+             factor=contad;
+             console.log("Found! @ ", contad);
+             break;
+           }
+        }
+
+        console.log("pila length: ", Pila.length);
+        Pila[Pila.length-1].y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la pila.
+        console.log("Factor: ", factor);
+
         console.log("Added node to stack!")
         //Dibujando.
         buscarCaminos=true;
@@ -511,7 +530,7 @@ function drawRightBuffer(){
     //Dibujando los elementos de la pila o cola.
     if(radioBtn.value()== 'Depth First Search '  ){
       //Dibujando elementos de la pila.
-      for( el of Cola ){
+      for( el of Pila ){
         el.showOnRight();
       }
 
