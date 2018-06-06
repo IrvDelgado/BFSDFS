@@ -8,6 +8,7 @@ var  anchoCanvas= 1200;
 var  altoCanvas=400;
 
 var currentNode=-1;
+var lastNode=-1;
 
 var Pila=[]; //Ya implementado
 var Cola=[]; //Casi implementado.
@@ -27,6 +28,8 @@ var addToQueue=false;
 var addToStack=false;
 
 var buscarCaminos=false;
+var moverCamino= false;
+haycaminossinvisitar=false;
 
 var nodoBtn;
 var nodoFlag=false;
@@ -314,8 +317,70 @@ function nextBtnPressed(){
     if(currentNode!=-1 ){
       if(!Nodos[currentNode].visitado ){
         Nodos[currentNode].visitado=true;
-        // addToQueue=true;
+        //____________________________________________
+        lblinfo.html("Marcando nodo "+currentNode.toString() +" como visitado.")
+        buscarCaminos=true;
+        currentPath=-1;
+        paths=[];
+        
       }
+      else if(buscarCaminos ){
+        //Buscando los caminos que hay desde este nodo.
+
+        if(currentPath==-1){
+          //Buscar caminos.
+
+          //Buscando todas las aristas que tengan al nodo.
+          for(edge of Aristas){
+            if(edge.Nodo1.x ==  Nodos[currentNode].x && edge.Nodo1.y ==  Nodos[currentNode].y )
+            {
+              //tomar Nodo2 como un camino desde Nodos[currentNode]
+              //console.log("Pushing node ", edge.Nodo1.numero);
+              paths.push( edge.Nodo2 );
+            }else if(edge.Nodo2.x ==  Nodos[currentNode].x && edge.Nodo2.y ==  Nodos[currentNode].y  ){
+              //tomar Nodo1 como un camino desde Nodos[currentNode]
+              paths.push( edge.Nodo1);
+              // console.log("Pushing node ", edge.Nodo2.numero);
+            }
+
+          }
+          
+          if(paths.length >0 ){
+            currentPath=0;
+          }
+
+        }
+
+        console.log("Hay ", paths.length, " caminos desde el nodo ", currentNode);
+        moverCamino=true;
+        lastNode=currentNode;
+        
+        haycaminossinvisitar=false;
+      }
+      else if(moverCamino){ 
+        //Por cada nodo en paths.
+
+        //Poner currentNode en el siguiente nodo de paths que no se haya visitado.
+
+        for( camino of paths ){
+          if(!camino.visitado ){
+            currentNode=camino.numero;
+            Cola.push( Nodos[currentNode] );
+            haycaminossinvisitar=true;
+          }
+
+        }
+
+        if( ! haycaminossinvisitar){
+          //Si ya no hay caminos desde este nodo. Regresar al nodo previo.
+          
+        }
+
+
+      }
+
+
+
     }
 
   }else if(radioBtn.value()=='Depth First Search ')
@@ -387,6 +452,7 @@ function nextBtnPressed(){
         }
 
         console.log("Hay ", paths.length, " caminos");
+        //**************************************************************
         // lblinfo.html("Hay "+ paths.length.toString()+ " caminos");
         //De los posibles caminos, ir al camino no visitado con numeor menor.
         var m=0
@@ -727,19 +793,3 @@ class Flecha {
 
 
 }
-//TODO verificar Si hay forma de llegar a él. DEBE ser conexo.
-//Remover nodos y aristas.
-//Que tenga buen diseño.
-
-//Agregar rdButton elegir BFS o DPS y un boton para comenzar.
-
-//Una vez que se presione comenzar, tomar el valor del rdbutton.
-
-//Dibujar Boton siguiente y anterior. (Su funcionalidad depende del algoritmo elegido)
-
-//Dibujar a la derecha la pila o la cola.
-//El tamaño del contenedor sera del numero de nodos.
-//Ir imprimiendo la salida.
-
-
-//Todo donde se muestran solo anterior y siguiente añadir boton para regresar a la eleccion de algoritmo.
