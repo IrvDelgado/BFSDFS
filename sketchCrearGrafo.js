@@ -419,7 +419,12 @@ function nextBtnPressed(){
       }
       //_____________________________________________________________________________________________________________
       else if(addToQueue){
-        console.log("Adding to quee");
+        console.log("Adding to queue");
+
+        console.log("En 1 la cola hay: ");
+        for(em of Cola){
+          console.log(em.numero.toString());
+        }
         //CHECAR QUE SE AÑADA COMO COLA Y NO COMO PILA.
         nodoAux= new Nodo(Nodos[toAdd].x, Nodos[toAdd].y, Nodos[toAdd].r,Nodos[toAdd].numero );
         //Calcular su valor en y.
@@ -428,11 +433,20 @@ function nextBtnPressed(){
         
         // nodoAux.y= altoderecho- ((toAdd+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola.
         // nodoAux.y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola.
-        //CHECAR ^__ BUScar que numero de elemento es toAdd en la Cola ese numero es el que se debe multiplicar por la altura.
+        
         
         Cola.push(nodoAux);
       
-      
+        console.log("En 2 la cola hay: ");
+        for(em of Cola){
+          console.log(em.numero.toString());
+        }
+
+        //Cola[Cola.length-1].y= altoderecho-5- Cola.length * Nodos[toAdd].r*2;
+
+        //Contar cuantos elementos hay en la cola y multiplicar el numero de elementos * radio
+
+/* 
         var factor=-1;
         for(var contad=0; contad< Cola.length ; contad++){
           // console.log("Checando Cola nodo: ", Cola[contad].numero);
@@ -444,9 +458,13 @@ function nextBtnPressed(){
         }
       
         
-        Cola[Cola.length-1].y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola.
+        Cola[Cola.length-1].y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola. 
+      */
         
-      
+        console.log("En 3 la cola hay: ");
+        for(em of Cola){
+          console.log(em.numero.toString());
+        }
         
         lblinfo.html("Se añade el nodo "+  toAdd.toString() +" a la cola.")
       
@@ -772,10 +790,11 @@ function drawRightBuffer(){
 
       rightBuffer.noStroke();
       rightBuffer.fill(0);
-      rightBuffer.text("Inicio de la Pila ->", anchoderecho*.1, 45);
-      rightBuffer.text("Fin de la Pila ->", anchoderecho*.1 , altoderecho-20);
+      rightBuffer.text("Fin de la Pila ->", anchoderecho*.1, 45);
+      rightBuffer.text("Inicio de la Pila ->", anchoderecho*.1 , altoderecho-20);
       //Dibujando elementos de la pila.
       for( el of Pila ){
+
         el.showOnRight();
       }
 
@@ -783,11 +802,14 @@ function drawRightBuffer(){
 
       rightBuffer.noStroke();
       rightBuffer.fill(0);
-      rightBuffer.text("Inicio de la Cola ->", anchoderecho*.1, 45);
-      rightBuffer.text("Fin de la Cola ->", anchoderecho*.1, altoderecho- 20);
+      rightBuffer.text("Fin de la Cola ->", anchoderecho*.1, 45);
+      rightBuffer.text("Inicio de la Cola ->", anchoderecho*.1, altoderecho- 20);
       //Dibujando elementos de la cola.
+      var cau=1;
       for( el of Cola ){
+        el.y=altoderecho-10- (cau*2*el.r);
         el.showOnRight();
+        cau++;
       }
     }
     
@@ -960,23 +982,4 @@ class Flecha {
 
   }
 
-
 }
-
-
-//TODO verificar Si hay forma de llegar a él. DEBE ser conexo.
-//Remover nodos y aristas.
-//Que tenga buen diseño.
-
-//Agregar rdButton elegir BFS o DPS y un boton para comenzar.
-
-//Una vez que se presione comenzar, tomar el valor del rdbutton.
-
-//Dibujar Boton siguiente y anterior. (Su funcionalidad depende del algoritmo elegido)
-
-//Dibujar a la derecha la pila o la cola.
-//El tamaño del contenedor sera del numero de nodos.
-//Ir imprimiendo la salida.
-
-
-//Todo donde se muestran solo anterior y siguiente añadir boton para regresar a la eleccion de algoritmo.
