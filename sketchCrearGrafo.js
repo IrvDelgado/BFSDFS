@@ -9,11 +9,17 @@ var  altoCanvas=400;
 
 var currentNode=-1;
 var lastNode=-1;
+var auxptr=-1;
+var toVisit=-1;
+var auxflg=false;
+var marcaraux=-1;
 
 var Pila=[]; //Ya implementado
 var Cola=[]; //Casi implementado.
 var paths=[];
 
+var haycaminos=false;
+var moveractual=false;
 var anchoderecho= 300;
 var altoderecho = 400;
 
@@ -128,6 +134,8 @@ function setup() {
 }
 
 var cual1=-1;
+var unvisited=0;
+
 function canvaspressed( ){
 
   //Verificar que se haya hecho click en la parte izquierda del canvas.
@@ -314,72 +322,160 @@ function nextBtnPressed(){
 
   if( radioBtn.value()=='Breadth First Search')
   {
-    if(currentNode!=-1 ){
-      if(!Nodos[currentNode].visitado ){
+ 
+    //1. 
+    if( currentNode!=-1 ){
+       //Si es el primer nodo, marcar como visitado.
+      if(currentNode==0 && (!Nodos[currentNode].visitado) ){
+        //Se acaba de comenzar.
         Nodos[currentNode].visitado=true;
-        //____________________________________________
-        lblinfo.html("Marcando nodo "+currentNode.toString() +" como visitado.")
+        lblinfo.html("Visitando al primer nodo ("+currentNode.toString() +"). Marcando como visitado.");
         buscarCaminos=true;
-        currentPath=-1;
-        paths=[];
+        haycaminos=false;
+        paths=[]
+      }
+
+
+      // ___________________________________________________________________________________________________________
+
+      else if(buscarCaminos){
+        console.log("buscarcaminos");
+        //El nodo actual ya se visitó. Buscando cuantos nodos hay a un paso del nodo actual.
+        for(edge of Aristas){
+          if(edge.Nodo1.x ==  Nodos[currentNode].x && edge.Nodo1.y ==  Nodos[currentNode].y )
+          {
+            //tomar Nodo2 como un camino desde Nodos[currentNode]
+            //console.log("Pushing node ", edge.Nodo1.numero);
+            paths.push( edge.Nodo2 );
+          }else if(edge.Nodo2.x ==  Nodos[currentNode].x && edge.Nodo2.y ==  Nodos[currentNode].y  ){
+            //tomar Nodo1 como un camino desde Nodos[currentNode]
+            paths.push( edge.Nodo1);
+            // console.log("Pushing node ", edge.Nodo2.numero);
+          }
+
+        }
+
+        
+        if( paths.length >0){
+          haycaminos=true;
+
+          if( paths.length >1)
+            lblinfo.html("Hay "+paths.length.toString() + " posibles caminos desde el nodo "+currentNode.toString()+ "\n. Se van a visitar los caminos.");
+          else
+            lblinfo.html("Hay "+paths.length.toString() + " posible camino desde el nodo "+currentNode.toString()+ "\n. Se va a visitar el camino.");
+
+          
+
+          //Buscando cuantos no se han visitado.
+          unvisited=0;
+          for(way of paths ){
+            if(!way.visitado)
+              unvisited++;
+          }
+        }
+        else{
+          lblinfo.html(" No Hay posibles caminos desde el nodo "+currentNode.toString());
+          haycaminos=false;
+          moveractual=true;
+        }
+
+        buscarCaminos=false;
+
+      }
+       //_____________________________________________________________________________________________________________
+
+      else if(auxflg ){
+        console.log("auxptr visitando el nodo ");
+        auxptr = toVisit;
+        if(!Nodos[auxptr].visitado){
+          lblinfo.html(" Visitando el nodo "+auxptr.toString() + " desde el nodo "+currentNode.toString());
+          marcaraux=auxptr;
+          auxptr=-1;
+          auxflg=false;
+        }
         
       }
-      else if(buscarCaminos ){
-        //Buscando los caminos que hay desde este nodo.
-
-        if(currentPath==-1){
-          //Buscar caminos.
-
-          //Buscando todas las aristas que tengan al nodo.
-          for(edge of Aristas){
-            if(edge.Nodo1.x ==  Nodos[currentNode].x && edge.Nodo1.y ==  Nodos[currentNode].y )
-            {
-              //tomar Nodo2 como un camino desde Nodos[currentNode]
-              //console.log("Pushing node ", edge.Nodo1.numero);
-              paths.push( edge.Nodo2 );
-            }else if(edge.Nodo2.x ==  Nodos[currentNode].x && edge.Nodo2.y ==  Nodos[currentNode].y  ){
-              //tomar Nodo1 como un camino desde Nodos[currentNode]
-              paths.push( edge.Nodo1);
-              // console.log("Pushing node ", edge.Nodo2.numero);
-            }
-
-          }
-          
-          if(paths.length >0 ){
-            currentPath=0;
-          }
-
-        }
-
-        console.log("Hay ", paths.length, " caminos desde el nodo ", currentNode);
-        moverCamino=true;
-        lastNode=currentNode;
+      //_____________________________________________________________________________________________________________
+      else if(marcaraux!=-1){
+        console.log("Marcando");
+        Nodos[marcaraux].visitado=true;
+        lblinfo.html(" Marcando el  nodo "+marcaraux.toString() + " como visitado. ");
+        addToQueue=true;
         
-        haycaminossinvisitar=false;
+        toAdd=marcaraux;
+        marcaraux=-1;
+        
       }
-      else if(moverCamino){ 
-        //Por cada nodo en paths.
-
-        //Poner currentNode en el siguiente nodo de paths que no se haya visitado.
-
-        for( camino of paths ){
-          if(!camino.visitado ){
-            currentNode=camino.numero;
-            Cola.push( Nodos[currentNode] );
-            haycaminossinvisitar=true;
-          }
-
+      //_____________________________________________________________________________________________________________
+      else if(addToQueue){
+        console.log("Adding to quee");
+        //CHECAR QUE SE AÑADA COMO COLA Y NO COMO PILA.
+        nodoAux= new Nodo(Nodos[toAdd].x, Nodos[toAdd].y, Nodos[toAdd].r,Nodos[toAdd].numero );
+        //Calcular su valor en y.
+        nodoAux.x= ((anchoderecho-(20+ (anchoderecho/2)) )/2 )+ anchoderecho-(anchoderecho/2) ;
+        
+        
+        // nodoAux.y= altoderecho- ((toAdd+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola.
+        // nodoAux.y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola.
+        //CHECAR ^__ BUScar que numero de elemento es toAdd en la Cola ese numero es el que se debe multiplicar por la altura.
+        
+        Cola.push(nodoAux);
+      
+      
+        var factor=-1;
+        for(var contad=0; contad< Cola.length ; contad++){
+          // console.log("Checando Cola nodo: ", Cola[contad].numero);
+           if( Nodos[toAdd].numero == Cola[contad].numero ){
+             factor=contad;
+            //  console.log("Found! @ ", contad);
+             break;
+           }
         }
-
-        if( ! haycaminossinvisitar){
-          //Si ya no hay caminos desde este nodo. Regresar al nodo previo.
+      
+        
+        Cola[Cola.length-1].y= altoderecho- ((factor+1)* nodoAux.r*2); //TODO que la altura sea el alto menos la suma de radios*2 que hay en la Cola.
+        
+      
+        
+        lblinfo.html("Se añade el nodo a la cola.")
+      
+        addToQueue=false;
+      }
+      //_____________________________________________________________________________________________________________
+      else if( haycaminos){
+        console.log("haycaminos");
+        
+        if( unvisited==0){
+          moveractual=true;
+          haycaminos=false;
+          lblinfo.html(" Ya se han visitado todos los nodos desde el nodo "+currentNode.toString());
+        }
+        else
+        {
+          //Mover auxpointer.
           
+          toVisit=paths.pop().numero;
+          auxflg=true;
+          
+          unvisited--;
         }
-
 
       }
 
+      //______________________________________________________________________________________________________________
+      else if( moveractual){
 
+        //Moviendo actual al primer elemento en la cola.
+        lblinfo.html(" Ya se han visitado todos los nodos desde el nodo "+currentNode.toString());
+        //Mover currentNode
+        currentNode= Cola.splice(0,1)[0].numero ;
+
+        moveractual=false;
+
+        
+
+      }
+      //______________________________________________________________________________________________________________
 
     }
 
@@ -514,7 +610,17 @@ function regresarElegirBtnPressed(){
 
   regresarElegirBtn.hide();
 
-  //Que se limpieelcanvas derecho.
+  //Que se limpieelcanvas derecho y que se marquen como no visitados todso.
+  for( nod of Nodos){
+    nod.visitado=false;
+  }
+
+  Pila=[];
+  Cola=[];
+  currentNode=-1;
+  auxptr=-1;  
+  auxflg=false;
+
 }
 
 function listoBtnPressed(){
@@ -576,10 +682,17 @@ function drawLeftBuffer(){
     
     if( comenzarBtnFlag ){
 
-      if(con==currentNode)
+      if(con==currentNode || con==auxptr)
       {
-        flechaux= new Flecha( b );
-        flechaux.showIzq();
+        if(con==currentNode){
+          flechaux= new Flecha( b );
+          flechaux.showIzq();
+        }else{
+          //Dibujando una flecha auxiliar. verde.
+
+          flechaux2= new Flecha( b, 0, 255, 0 );
+          flechaux2.showIzq();
+        }
       }else if(currentNode==-1 && Nodo.length >0 ){
         currentNode=0;
       }
@@ -605,6 +718,7 @@ function drawRightBuffer(){
     rightBuffer.noStroke();
     rightBuffer.fill(0);
     rightBuffer.text(algoritmo, anchoderecho / 2, 20);
+    
 
     //Dibujando contorno de pila/cola
     rightBuffer.stroke(255);
@@ -618,13 +732,26 @@ function drawRightBuffer(){
 
     //Dibujando los elementos de la pila o cola.
     if(radioBtn.value()== 'Depth First Search '  ){
+
+      rightBuffer.noStroke();
+      rightBuffer.fill(0);
+      rightBuffer.text("Inicio de la Pila ->", anchoderecho*.1, 45);
+      rightBuffer.text("Fin de la Pila ->", anchoderecho*.1 , altoderecho-20);
       //Dibujando elementos de la pila.
       for( el of Pila ){
         el.showOnRight();
       }
 
     }else if(   radioBtn.value() == 'Breadth First Search' ){
+
+      rightBuffer.noStroke();
+      rightBuffer.fill(0);
+      rightBuffer.text("Inicio de la Cola ->", anchoderecho*.1, 45);
+      rightBuffer.text("Fin de la Cola ->", anchoderecho*.1, altoderecho- 20);
       //Dibujando elementos de la cola.
+      for( el of Cola ){
+        el.showOnRight();
+      }
     }
     
   }else{
@@ -734,7 +861,7 @@ class Nodo {
 
 class Flecha {
   //Crear una flecha que apunta a un nodo.
-  constructor( nodo  ) {
+  constructor( nodo, r=255, g=0, b=0  ) {
     // verticeIzq, verticeSuperior, verticeInferior, verticeDer
 
     //Verificando si el nodo está muy a la izquierda, en ese caso orientar a la derecha.
@@ -754,15 +881,20 @@ class Flecha {
 
       this.verticeInferiorX=this.verticeSuperiorX;
       this.verticeInferiorY= nodo.y + (nodo.r*.3);
+
+      this.r=r;
+      this.g=g;
+      this.b=b;
     }
 
     
   }
 
   showIzq(){
+    //leftBuffer.stroke(this.r,this.g,this.b);
     leftBuffer.stroke(255,0,0);
     leftBuffer.strokeWeight(3);
-    leftBuffer.fill(255,0,0);
+    leftBuffer.fill(this.r,this.g,this.b);
     //Linea de vertizq al centro de la linea entre vertSup y vertInf
      leftBuffer.line( this.verticeIzqX, this.verticeIzqY, this.verticeInferiorX, this.verticeIzqY  );
     // leftBuffer.line(this.verticeIzqX, this.verticeIzqY, this.verticeDerX,this.verticeDerY);
@@ -793,3 +925,21 @@ class Flecha {
 
 
 }
+
+
+//TODO verificar Si hay forma de llegar a él. DEBE ser conexo.
+//Remover nodos y aristas.
+//Que tenga buen diseño.
+
+//Agregar rdButton elegir BFS o DPS y un boton para comenzar.
+
+//Una vez que se presione comenzar, tomar el valor del rdbutton.
+
+//Dibujar Boton siguiente y anterior. (Su funcionalidad depende del algoritmo elegido)
+
+//Dibujar a la derecha la pila o la cola.
+//El tamaño del contenedor sera del numero de nodos.
+//Ir imprimiendo la salida.
+
+
+//Todo donde se muestran solo anterior y siguiente añadir boton para regresar a la eleccion de algoritmo.
