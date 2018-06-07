@@ -20,6 +20,7 @@ var paths=[];
 
 var haycaminos=false;
 var moveractual=false;
+var recorridoscaminos=false;
 var anchoderecho= 300;
 var altoderecho = 400;
 
@@ -376,7 +377,7 @@ function nextBtnPressed(){
         else{
           lblinfo.html(" No Hay posibles caminos desde el nodo "+currentNode.toString());
           haycaminos=false;
-          moveractual=true;
+          recorridoscaminos=true;
         }
 
         buscarCaminos=false;
@@ -385,12 +386,19 @@ function nextBtnPressed(){
        //_____________________________________________________________________________________________________________
 
       else if(auxflg ){
-        console.log("auxptr visitando el nodo ");
+        
         auxptr = toVisit;
+
+        console.log("A partir de aqui se dben imprimir ");
+
         if(!Nodos[auxptr].visitado){
+
+          
+          console.log("auxptr visitando el nodo ", auxptr);
+
           lblinfo.html(" Visitando el nodo "+auxptr.toString() + " desde el nodo "+currentNode.toString());
-          marcaraux=auxptr;
-          auxptr=-1;
+          marcaraux=auxptr; 
+          // auxptr=-1;
           auxflg=false;
         }
         
@@ -437,18 +445,19 @@ function nextBtnPressed(){
         
       
         
-        lblinfo.html("Se añade el nodo a la cola.")
+        lblinfo.html("Se añade el nodo "+  toAdd.toString() +" a la cola.")
       
         addToQueue=false;
       }
       //_____________________________________________________________________________________________________________
       else if( haycaminos){
         console.log("haycaminos");
-        
+         auxptr=-1;
         if( unvisited==0){
-          moveractual=true;
+          // moveractual=true;
+          recorridoscaminos=true;
           haycaminos=false;
-          lblinfo.html(" Ya se han visitado todos los nodos desde el nodo "+currentNode.toString());
+           // lblinfo.html(" Ya se han visitado todos los nodos desde el nodo "+currentNode.toString());
         }
         else
         {
@@ -463,17 +472,30 @@ function nextBtnPressed(){
       }
 
       //______________________________________________________________________________________________________________
-      else if( moveractual){
+      else if( recorridoscaminos){
+        console.log("Recorrido!")
 
         //Moviendo actual al primer elemento en la cola.
-        lblinfo.html(" Ya se han visitado todos los nodos desde el nodo "+currentNode.toString());
-        //Mover currentNode
-        currentNode= Cola.splice(0,1)[0].numero ;
+        lblinfo.html(" Ya se han visitado todos los nodos desde el nodo "+currentNode.toString())+ " se busca en la cola el siguiente nodo.";
 
-        moveractual=false;
 
         
+        
+        recorridoscaminos=false;
+        moveractual=true;
+        
 
+      }
+      //______________________________________________________________________________________________________________
+      else if( moveractual){
+        //Mover currentNode
+        console.log("Moviendo el actual.")
+        currentNode= Cola.splice(0,1)[0].numero ;
+
+        console.log(" Movido al nodo "+ currentNode);
+        lblinfo.html(" Visitando al primer nodo de la cola, el nodo "+ currentNode.toString() );
+
+         moveractual=false;
       }
       //______________________________________________________________________________________________________________
 
@@ -682,21 +704,29 @@ function drawLeftBuffer(){
     
     if( comenzarBtnFlag ){
 
-      if(con==currentNode || con==auxptr)
+      if(con==currentNode)
       {
-        if(con==currentNode){
-          flechaux= new Flecha( b );
+        
+          // console.log("Dibujando una flecha normal en el nodo "+ con.toString());
+          flechaux= new Flecha( b,255,0,0 );
           flechaux.showIzq();
-        }else{
-          //Dibujando una flecha auxiliar. verde.
-
-          flechaux2= new Flecha( b, 0, 255, 0 );
-          flechaux2.showIzq();
-        }
+        
+        
       }else if(currentNode==-1 && Nodo.length >0 ){
         currentNode=0;
       }
     
+      // console.log("Dibujar flecha aux en " +con.toString() + " ptr en "+auxptr.toString() );
+      if( con == auxptr){
+        //Dibujando una flecha auxiliar. verde.
+        // console.log("Dibujando una flecha auxiliar. en el nodo "+ con.toString());
+        flechaux2= new Flecha( b, 165, 221, 253 );
+        
+        flechaux2.showIzq();
+      }
+
+
+
       con++;
 
     }
@@ -861,7 +891,7 @@ class Nodo {
 
 class Flecha {
   //Crear una flecha que apunta a un nodo.
-  constructor( nodo, r=255, g=0, b=0  ) {
+  constructor( nodo, r, g, b  ) {
     // verticeIzq, verticeSuperior, verticeInferior, verticeDer
 
     //Verificando si el nodo está muy a la izquierda, en ese caso orientar a la derecha.
@@ -891,8 +921,8 @@ class Flecha {
   }
 
   showIzq(){
-    //leftBuffer.stroke(this.r,this.g,this.b);
-    leftBuffer.stroke(255,0,0);
+    leftBuffer.stroke(this.r,this.g,this.b);
+    //leftBuffer.stroke(255,0,0);
     leftBuffer.strokeWeight(3);
     leftBuffer.fill(this.r,this.g,this.b);
     //Linea de vertizq al centro de la linea entre vertSup y vertInf
