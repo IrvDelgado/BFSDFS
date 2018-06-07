@@ -361,9 +361,9 @@ function nextBtnPressed(){
           haycaminos=true;
 
           if( paths.length >1)
-            lblinfo.html("Hay "+paths.length.toString() + " posibles caminos desde el nodo "+currentNode.toString()+ "\n. Se van a visitar los caminos.");
+            lblinfo.html("Hay "+paths.length.toString() + " posibles caminos desde el nodo "+currentNode.toString()+ "\n. Se van a visitar los nodos que no se hayan visitado");
           else
-            lblinfo.html("Hay "+paths.length.toString() + " posible camino desde el nodo "+currentNode.toString()+ "\n. Se va a visitar el camino.");
+            lblinfo.html("Hay "+paths.length.toString() + " posible camino desde el nodo "+currentNode.toString()+ "\n. Se va a visitar el camino si no se ha visitado");
 
           
 
@@ -401,7 +401,10 @@ function nextBtnPressed(){
           // auxptr=-1;
           auxflg=false;
         }
+       
         
+
+
       }
       //_____________________________________________________________________________________________________________
       else if(marcaraux!=-1){
@@ -495,7 +498,11 @@ function nextBtnPressed(){
         console.log(" Movido al nodo "+ currentNode);
         lblinfo.html(" Visitando al primer nodo de la cola, el nodo "+ currentNode.toString() );
 
-         moveractual=false;
+        moveractual=false;
+
+        buscarCaminos=true;
+        haycaminos=false;
+        paths=[]
       }
       //______________________________________________________________________________________________________________
 
